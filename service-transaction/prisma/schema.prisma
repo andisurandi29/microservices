@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model transaksi {
+  id           BigInt   @id @default(autoincrement())
+  kode_billing String   @unique @db.VarChar(255)
+  pembeli_id   BigInt   
+  total_harga  Decimal  @db.Decimal(10, 2)
+  status       Status   @default(BELUM_DIBAYAR)
+  expired_at   DateTime 
+  created_at   DateTime @default(now())
+
+  items        keranjang[]
+}
+
+model keranjang {
+  id           BigInt     @id @default(autoincrement())
+  
+  // Transaksi ID boleh NULL dulu (saat masih di keranjang/belum checkout)
+  transaksi_id BigInt?    
+  transaksi    transaksi? @relation(fields: [transaksi_id], references: [id])
+  
+  produk_id    BigInt     // Data Master
+  pembeli_id   BigInt     // Tambahan agar bisa filter keranjang per user
+  harga        Decimal    @db.Decimal(10, 2)
+}
+
+enum Status {
+  BELUM_DIBAYAR
+  SUDAH_DIBAYAR
+}

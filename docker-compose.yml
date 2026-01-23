@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  # --- 1. DATABASE SERVICE (MySQL) ---
+  mysql_db:
+    image: mysql:8.0
+    container_name: microservice_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: MicroServiceTest725
+    ports:
+      - "3307:3306" # Kita pakai port 3307 di host agar tidak bentrok jika ada MySQL lokal
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d # Load script 3 database
+    networks:
+      - app-network
+
+  # --- 2. AUTH SERVICE (Port 3001) ---
+  auth-service:
+    build: ./service-auth-rbac
+    container_name: service_auth
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      # Perhatikan: hostnya bukan 'localhost', tapi nama service 'mysql_db'
+      - DATABASE_URL=mysql://root:MicroServiceTest725@mysql_db:3306/db_bit_auth_rbac
+      - JWT_SECRET="iFpfkd?.KX-IOn]jmaXA2[xIHHVuik!pP3:nz01AcoM"
+      - GATEWAY_SECRET="xWjOX6vvPbADwN9oQMGkbEfDE80Ytw0EDB5WsiOrASA"
+    command: sh -c "npx prisma migrate deploy && npx prisma db seed && node dist/index.js"
+    depends_on:
+      - mysql_db
+    networks:
+      - app-network
+
+  # --- 3. MASTER SERVICE (Port 3002) ---
+  master-service:
+    build: ./service-data-master
+    container_name: service_master
+    restart: always
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - DATABASE_URL=mysql://root:MicroServiceTest725@mysql_db:3306/db_bit_master
+      - GATEWAY_SECRET="xWjOX6vvPbADwN9oQMGkbEfDE80Ytw0EDB5WsiOrASA"
+    command: sh -c "npx prisma migrate deploy && node dist/index.js"
+    depends_on:
+      - mysql_db
+    networks:
+      - app-network
+
+  # --- 4. TRANSACTION SERVICE (Port 3003) ---
+  transaction-service:
+    build: ./service-transaction
+    container_name: service_transaction
+    restart: always
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - DATABASE_URL=mysql://root:MicroServiceTest725@mysql_db:3306/db_bit_transaction
+      # Komunikasi antar service pakai nama container, bukan localhost
+      - MASTER_SERVICE_URL=http://master-service:3002
+      - GATEWAY_SECRET="xWjOX6vvPbADwN9oQMGkbEfDE80Ytw0EDB5WsiOrASA"
+    command: sh -c "npx prisma migrate deploy && node dist/index.js"
+    depends_on:
+      - mysql_db
+      - master-service
+    networks:
+      - app-network
+
+  # --- 5. API GATEWAY (Port 3000) ---
+  api-gateway:
+    build: ./api-gateway
+    container_name: api_gateway
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - JWT_SECRET="iFpfkd?.KX-IOn]jmaXA2[xIHHVuik!pP3:nz01AcoM"
+      - GATEWAY_SECRET="xWjOX6vvPbADwN9oQMGkbEfDE80Ytw0EDB5WsiOrASA"
+      # Routing ke service lain pakai nama container
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - MASTER_SERVICE_URL=http://master-service:3002
+      - TRANSACTION_SERVICE_URL=http://transaction-service:3003
+    depends_on:
+      - auth-service
+      - master-service
+      - transaction-service
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend  
+    container_name: frontend_react
+    restart: always
+    ports:
+      - "5173:5173" 
+    volumes:
+      - ./frontend:/app          
+      - /app/node_modules       
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3000/api 
+    depends_on:
+      - api-gateway
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge

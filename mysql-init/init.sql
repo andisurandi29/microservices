@@ -1,0 +1,3 @@
+CREATE DATABASE IF NOT EXISTS db_bit_auth_rbac;
+CREATE DATABASE IF NOT EXISTS db_bit_master;
+CREATE DATABASE IF NOT EXISTS db_bit_transaction;
