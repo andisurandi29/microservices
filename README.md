@@ -45,7 +45,7 @@ microservices/
 ├── service-transaction/    # Backend Transaksi
 ├── docker-compose.yml      # Konfigurasi Docker
 └── README.md               # Dokumentasi ini
-
+```
 
 ## Akun Default
 Gunakan akun ini untuk login pertama kali (dari hasil seeding):
@@ -78,6 +78,7 @@ Buka terminal dan jalankan perintah berikut:
 ```bash
 git clone <repository_url>
 cd microservices
+```
 
 ### 2. Konfigurasi Environment Variables (.env)
 Setiap service memiliki file .env.example. Anda perlu menyalinnya menjadi file .env
@@ -87,6 +88,7 @@ Silakan jalankan perintah berikut di terminal root project/service:
 ```bash
 cd folder-service-project
 cp .env.example .env
+```
 
 Catatan: File .env.example sudah dikonfigurasi dan disesuaikan dengan Docker Compose, Jika merubah konfigurasi .env maka pastikan konfigurasi pada docker compose juga sesuai.
 
@@ -94,6 +96,7 @@ Catatan: File .env.example sudah dikonfigurasi dan disesuaikan dengan Docker Com
 
 ```bash
 docker-compose up -d --build
+```
 
 # Instalasi & Cara Menjalankan (Manual / Tanpa Docker)
 Jika Anda tidak menggunakan Docker, Anda dapat menjalankan setiap service secara manual. Metode ini membutuhkan **Node.js** dan **MySQL** yang sudah terinstall di komputer Anda (misal via XAMPP atau Laragon).
@@ -110,6 +113,7 @@ Buka terminal dan clone project ini ke komputer Anda:
 ```bash
 git clone <repository_url>
 cd microservices
+```
 
 ### 2. NPM Install (Install Dependencies)
 ```bash
@@ -121,6 +125,7 @@ cd client && npm install && cd ..
 cd service-auth-rbac && npm install && cd ..
 cd service-master && npm install && cd ..
 cd service-transaction && npm install && cd ..
+```
 
 ### 3. Konfigurasi Environment Variables (.env)
 Setiap service memiliki file .env.example. Anda perlu menyalinnya menjadi file .env
@@ -130,6 +135,7 @@ Silakan jalankan perintah berikut di terminal root project/service:
 ```bash
 cd folder-service-project
 cp .env.example .env
+```
 
 Catatan : Sesuaikan root:password dengan MySQL lokal Anda.
 
@@ -155,11 +161,13 @@ cd ..
 cd service-transaction
 npx prisma migrate deploy
 cd ..
+```
 
 ### Jalankan Project (Run Dev)
 Karena ini adalah Microservices, Anda perlu menjalankan 5 terminal secara bersamaan agar semua sistem terhubung.
 
 ```bash
 cd folder-service-atau-project && npm run dev
+```
 
 ## Happy Coding! 🚀
