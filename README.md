@@ -149,15 +149,11 @@ npx prisma db seed
 cd ..
 
 #### 2. Service Data Master:
-
-```bash
 cd service-data-master
 npx prisma migrate deploy
 cd ..
 
 #### 3. Service Transaction:
-
-```bash
 cd service-transaction
 npx prisma migrate deploy
 cd ..
