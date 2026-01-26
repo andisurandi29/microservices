@@ -62,7 +62,6 @@ services:
     environment:
       - PORT=3003
       - DATABASE_URL=mysql://root:MicroServiceTest725@mysql_db:3306/db_bit_transaction
-      # Komunikasi antar service pakai nama container, bukan localhost
       - MASTER_SERVICE_URL=http://master-service:3002
       - GATEWAY_SECRET="xWjOX6vvPbADwN9oQMGkbEfDE80Ytw0EDB5WsiOrASA"
     command: sh -c "npx prisma migrate deploy && node dist/index.js"

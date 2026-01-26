@@ -6,7 +6,7 @@ dotenv.config();
 export const getProductFromMaster = async (productId: string) => {
     try {
         // Ambil data produk dari Service Master melalui API Gateway
-        const response = await axios.get(`${process.env.API_GATEWAY_URL}/products`, {
+        const response = await axios.get(`${process.env.MASTER_SERVICE_URL}/products`, {
             headers: {
                 'X-INTERNAL-KEY': process.env.GATEWAY_SECRET
             }
