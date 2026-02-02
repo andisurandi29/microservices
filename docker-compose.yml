@@ -9,10 +9,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: MicroServiceTest725
     ports:
-      - "3307:3306" # Kita pakai port 3307 di host agar tidak bentrok jika ada MySQL lokal
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./mysql-init:/docker-entrypoint-initdb.d # Load script 3 database
+      - ./mysql-init:/docker-entrypoint-initdb.d
     networks:
       - app-network
 
@@ -25,7 +25,6 @@ services:
       - "3001:3001"
     environment:
       - PORT=3001
-      # Perhatikan: hostnya bukan 'localhost', tapi nama service 'mysql_db'
       - DATABASE_URL=mysql://root:MicroServiceTest725@mysql_db:3306/db_bit_auth_rbac
       - JWT_SECRET="iFpfkd?.KX-IOn]jmaXA2[xIHHVuik!pP3:nz01AcoM"
       - GATEWAY_SECRET="xWjOX6vvPbADwN9oQMGkbEfDE80Ytw0EDB5WsiOrASA"
@@ -82,7 +81,7 @@ services:
       - PORT=3000
       - JWT_SECRET="iFpfkd?.KX-IOn]jmaXA2[xIHHVuik!pP3:nz01AcoM"
       - GATEWAY_SECRET="xWjOX6vvPbADwN9oQMGkbEfDE80Ytw0EDB5WsiOrASA"
-      # Routing ke service lain pakai nama container
+      # Routing ke service lain
       - AUTH_SERVICE_URL=http://auth-service:3001
       - MASTER_SERVICE_URL=http://master-service:3002
       - TRANSACTION_SERVICE_URL=http://transaction-service:3003
