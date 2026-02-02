@@ -49,7 +49,9 @@ const AdminTransactions = () => {
     // Helper: Nama Produk
     const getProductName = (items) => {
         if (!items || items.length === 0) return "-";
-        const prodId = items[0].product_id;
+        
+        const prodId = items[0].produk_id; 
+        
         const prod = products.find(p => p.id == prodId);
         return prod ? prod.name : `ID: ${prodId}`;
     };
